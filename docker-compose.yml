@@ -37,6 +37,8 @@ services:
       - INFLUX_BUCKET=lora-bucket
       - INFLUX_USER=influx_admin
       - INFLUX_USER_PASSWORD=${INFLUX_PASSWORD}
+      - INFLUXD_NODE_ID=${INFLUXD_NODE_ID}
+    command: ["serve", "--node-id", "${INFLUXD_NODE_ID}"]
     volumes:
       - influxdb_data:/var/lib/influxdb
     networks:
