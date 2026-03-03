@@ -13,6 +13,7 @@ services:
     networks:
       - lora_stack_net
 
+
   nodered:
     image: nodered/node-red:latest
     container_name: lora-nodered
@@ -30,7 +31,7 @@ services:
     image: influxdb:3-core
     container_name: lora-influxdb
     environment:
-      - INFLUXD_HTTP_BIND_ADDRESS=:8086
+      - INFLUXD_HTTP_BIND_ADDRESS=:8181
       - INFLUXD_HIDE_LEGACY_NOTICE=true
       - INFLUX_TOKEN=${INFLUX_TOKEN}
       - INFLUX_ORG=lora-org
@@ -38,11 +39,16 @@ services:
       - INFLUX_USER=influx_admin
       - INFLUX_USER_PASSWORD=${INFLUX_PASSWORD}
       - INFLUXD_NODE_ID=${INFLUXD_NODE_ID}
-    command: ["serve", "--node-id", "${INFLUXD_NODE_ID}"]
+      - INFLUXD_LOG_FILTER=${INFLUXD_LOG_FILTER}
+      - INFLUXD_DATA_DIR=${INFLUXD_DATA_DIR}
+    command: >
+      bash -c "set -e;
+        exec influxdb3 serve --node-id ${INFLUXD_NODE_ID} --object-store file --data-dir ${INFLUXD_DATA_DIR} --log-filter ${INFLUXD_LOG_FILTER}"
     volumes:
       - influxdb_data:/var/lib/influxdb
     networks:
       - lora_stack_net
+    user: root
 
   grafana:
     image: grafana/grafana:latest
