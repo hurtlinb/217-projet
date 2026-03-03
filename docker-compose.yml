@@ -15,7 +15,9 @@ services:
 
 
   nodered:
-    image: nodered/node-red:latest
+    build:
+      context: ./docker/nodered
+    image: lora-nodered:latest
     container_name: lora-nodered
     environment:
       - TZ=UTC

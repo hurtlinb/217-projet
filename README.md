@@ -3,7 +3,7 @@
 Ce dépôt installe une stack Docker complète pour recevoir les données LoRa (depuis TTN) :
 
 - **HAProxy** est le point d’entrée unique côté public (port 80). Il redirige `http://<VM_IP>/nodered` vers Node-RED, `/grafana` vers Grafana et `/api` vers InfluxDB.  
-- **Node-RED** (`nodered/node-red`) gère les flux LoRa côté serveur et expose l’éditeur sur `/nodered`.  
+- **Node-RED** (custom `lora-nodered:latest` dérivé de `nodered/node-red`) gère les flux LoRa sur `/nodered` et embarque `node-red-contrib-influxdb` pour écrire directement dans InfluxDB 3.
 - **InfluxDB 3 Core** (`influxdb:3-core`) stocke les données suite à un service lancé avec `--object-store file` et écoute sur le backend HTTP 8181 exposé sous `/api`.  
 - **Grafana** (`grafana/grafana`) tourne avec `GF_SERVER_ROOT_URL=.../grafana` et `GF_SERVER_SERVE_FROM_SUB_PATH=true`, donc toutes les URLs restent préfixées par `/grafana` (ex. `/grafana/login`).
 
