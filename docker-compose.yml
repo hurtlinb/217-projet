@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  haproxy:
+    image: haproxy:2.9
+    container_name: lora-haproxy
+    volumes:
+      - ./config/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - '80:80'
+    depends_on:
+      - nodered
+      - grafana
+      - influxdb
+    networks:
+      - lora_stack_net
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: lora-nodered
+    environment:
+      - TZ=UTC
+      - NODE_RED_USERNAME=admin
+      - NODE_RED_PASSWORD=${NODE_RED_PASSWORD}
+      - FLOWS=flows.json
+    volumes:
+      - nodered_data:/data
+    networks:
+      - lora_stack_net
+
+  influxdb:
+    image: influxdb:3
+    container_name: lora-influxdb
+    environment:
+      - INFLUXD_HTTP_BIND_ADDRESS=:8086
+      - INFLUXD_HIDE_LEGACY_NOTICE=true
+      - INFLUX_TOKEN=${INFLUX_TOKEN}
+      - INFLUX_ORG=lora-org
+      - INFLUX_BUCKET=lora-bucket
+      - INFLUX_USER=influx_admin
+      - INFLUX_USER_PASSWORD=${INFLUX_PASSWORD}
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    networks:
+      - lora_stack_net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: lora-grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - lora_stack_net
+
+volumes:
+  nodered_data:
+  influxdb_data:
+  grafana_data:
+
+networks:
+  lora_stack_net:
+    driver: bridge
