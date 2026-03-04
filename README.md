@@ -13,6 +13,10 @@ Ce dépôt installe une stack Docker complète pour recevoir les données LoRa (
 - Grafana : `http://<public-ip>/grafana`  
 - API InfluxDB : `http://<public-ip>/api`
 
+## Authentification HAProxy
+
+HAProxy force désormais une authentification HTTP basique sur toutes les URLs (identifiants définis dans `config/haproxy.cfg`). Le frontend utilise un `userlist` `protected` et `http-request auth` : vous devez remplacer `admin`/`ChangeMeClient123!` par vos propres identifiants (idéalement stockés dans un mot de passe haché via `password` ou `password-file`). Les navigateurs demanderont ces identifiants dès qu’ils atteignent `http://<public-ip>/...`.
+
 *(Remplacez `<public-ip>` par l’adresse publique Azure de la VM. L’interface est sécurisée par les secrets définis dans `.env`.)*
 
 ## Démarrage
