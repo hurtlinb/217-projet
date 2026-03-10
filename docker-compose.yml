@@ -89,6 +89,8 @@ services:
         else
           mosquitto_passwd -b -c \"$${PASSWORD_FILE}\" \"$${USERNAME}\" \"$${PASSWORD}\";
         fi;
+        chown mosquitto:mosquitto \"$${PASSWORD_FILE}\";
+        chmod 640 \"$${PASSWORD_FILE}\";
         exec mosquitto -c /mosquitto/config/mosquitto.conf"
     networks:
       - lora_stack_net
