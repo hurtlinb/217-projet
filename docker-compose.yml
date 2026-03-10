@@ -79,7 +79,6 @@ services:
     volumes:
       - ./config/mosquitto:/mosquitto/config
       - mosquitto_data:/mosquitto/data
-      - mosquitto_log:/mosquitto/log
     command: >
       sh -c "set -eu;
         USERNAME=$${MOSQUITTO_USERNAME:-mqtt};
@@ -99,7 +98,6 @@ volumes:
   influxdb_data:
   grafana_data:
   mosquitto_data:
-  mosquitto_log:
 
 networks:
   lora_stack_net:
