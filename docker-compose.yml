@@ -81,10 +81,11 @@ services:
       - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
     command: >
-      sh -c "if [ -n '${MOSQUITTO_USERNAME}' ] && [ -n '${MOSQUITTO_PASSWORD}' ]; then
-        mosquitto_passwd -b /mosquitto/config/password ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD};
-      fi
-      exec mosquitto -c /mosquitto/config/mosquitto.conf"
+      sh -c "set -e;
+        USERNAME=${MOSQUITTO_USERNAME:-mqtt};
+        PASSWORD=${MOSQUITTO_PASSWORD:-ChangeMeMQTT123!};
+        mosquitto_passwd -b /mosquitto/config/password $USERNAME $PASSWORD;
+        exec mosquitto -c /mosquitto/config/mosquitto.conf"
     networks:
       - lora_stack_net
 
