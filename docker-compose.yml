@@ -68,7 +68,7 @@ services:
       - lora_stack_net
 
   mosquitto:
-    image: eclipse-mosquitto:3.0
+    image: eclipse-mosquitto:2.1.2-alpine
     container_name: lora-mosquitto
     environment:
       - TZ=UTC
