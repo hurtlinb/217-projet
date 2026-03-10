@@ -13,6 +13,21 @@ Ce dépôt installe une stack Docker complète pour recevoir les données LoRa (
 - Grafana : `http://<public-ip>/grafana`  
 - API InfluxDB : `http://<public-ip>/api`
 
+## Broker MQTT (Mosquitto)
+
+- Le service `mosquitto` écoute sur le port TCP `1883` de la VM : `mqtt://<public-ip>:1883`.
+- Les identifiants sont définis dans `.env` via `MOSQUITTO_USERNAME` et `MOSQUITTO_PASSWORD`; changez-les avant déploiement.
+- Pour générer ou mettre à jour le fichier de mots de passe, exécutez :
+
+  ```sh
+  docker compose run --rm mosquitto \
+    mosquitto_passwd -b /mosquitto/config/password ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD}
+  ```
+
+  La commande est lancée une fois au démarrage du conteneur via `docker-compose` mais il est bon de la rerun chaque fois que vous modifiez les identifiants.
+
+`config/mosquitto/mosquitto.conf` désactive l’accès anonyme et persiste les données/logs dans les volumes `mosquitto_data` et `mosquitto_log`.
+
 ## Authentification HAProxy
 
 HAProxy force désormais une authentification HTTP basique sur toutes les URLs (identifiants définis dans `config/haproxy.cfg`). Le frontend utilise un `userlist` `protected` et `http-request auth` : vous devez remplacer `admin`/`ChangeMeClient123!` par vos propres identifiants (idéalement stockés dans un mot de passe haché via `password` ou `password-file`). Les navigateurs demanderont ces identifiants dès qu’ils atteignent `http://<public-ip>/...`.

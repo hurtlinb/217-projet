@@ -67,10 +67,33 @@ services:
     networks:
       - lora_stack_net
 
+  mosquitto:
+    image: eclipse-mosquitto:3.0
+    container_name: lora-mosquitto
+    environment:
+      - TZ=UTC
+      - MOSQUITTO_USERNAME=${MOSQUITTO_USERNAME}
+      - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
+    ports:
+      - '1883:1883'
+    volumes:
+      - ./config/mosquitto:/mosquitto/config
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    command: >
+      sh -c "if [ -n '${MOSQUITTO_USERNAME}' ] && [ -n '${MOSQUITTO_PASSWORD}' ]; then
+        mosquitto_passwd -b /mosquitto/config/password ${MOSQUITTO_USERNAME} ${MOSQUITTO_PASSWORD};
+      fi
+      exec mosquitto -c /mosquitto/config/mosquitto.conf"
+    networks:
+      - lora_stack_net
+
 volumes:
   nodered_data:
   influxdb_data:
   grafana_data:
+  mosquitto_data:
+  mosquitto_log:
 
 networks:
   lora_stack_net:
